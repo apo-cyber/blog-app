@@ -10,6 +10,7 @@ import { Loading } from "@/components/ui/Loading";
 import { Button } from "@/components/ui/Button";
 import { MagnifyingGlassIcon, FunnelIcon } from "@heroicons/react/24/outline";
 import { Header } from "@/components/layout/Header";
+import { SimpleFooter } from "@/components/layout/SimpleFooter";
 
 export default function HomePage() {
   const [search, setSearch] = useState("");
@@ -137,6 +138,7 @@ export default function HomePage() {
           </>
         )}
       </main>
+      <SimpleFooter />
     </div>
   );
 }
