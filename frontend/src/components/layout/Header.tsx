@@ -43,8 +43,12 @@ export function Header() {
     <header className="bg-white shadow-sm border-b">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="flex items-center">
-            <h1 className="text-2xl font-bold text-gray-900">Apo-Blog</h1>
+          <Link
+            href="/"
+            className="flex items-center gap-2 text-lg font-bold text-gray-900"
+          >
+            <img src="/apo.png" alt="Apo logo" className="w-16 h-10" />
+            apo-blog
           </Link>
 
           <nav className="flex items-center space-x-4">
