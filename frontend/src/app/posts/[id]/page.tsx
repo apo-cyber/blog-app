@@ -1,5 +1,3 @@
-// src/app/posts/[id]/page.tsx
-
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
@@ -30,12 +28,16 @@ import { Button } from "@/components/ui/Button";
 import { Header } from "@/components/layout/Header";
 import { Markdown } from "@/components/ui/Markdown";
 import toast from "react-hot-toast";
+import { useState } from "react";
+import { ImageModal } from "@/components/ui/ImageModal";
 
 export default function BlogPostDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { user } = useAuth(); // フックは必ず最初に呼び出す
   const postId = Number(params.id);
+
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
   const { data: post, isLoading, error } = useBlogPost(postId);
   const likeMutation = useLikeBlogPost();
@@ -119,7 +121,10 @@ export default function BlogPostDetailPage() {
         <article className="bg-white rounded-lg shadow-md overflow-hidden">
           {/* アイキャッチ画像 */}
           {post.image && (
-            <div className="relative h-96 w-full">
+            <div
+              className="relative h-96 w-full cursor-pointer"
+              onClick={() => setIsImageModalOpen(true)}
+            >
               <Image
                 src={post.image}
                 alt={post.title}
@@ -265,6 +270,15 @@ export default function BlogPostDetailPage() {
             </div>
           </div>
         </article>
+        {post.image && (
+          <ImageModal
+            src={post.image}
+            alt="アイキャッチ画像"
+            caption={post.title}
+            isOpen={isImageModalOpen}
+            onClose={() => setIsImageModalOpen(false)}
+          />
+        )}
       </main>
     </div>
   );
