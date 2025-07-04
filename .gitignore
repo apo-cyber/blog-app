@@ -4,6 +4,7 @@ __pycache__/
 *.pyc
 *.sqlite3
 backend/.env
+info.txt
 
 # === Node.js / Next.js (frontend) ===
 frontend/node_modules/
