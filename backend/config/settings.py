@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'blog',
+    'django_cleanup',  # 画像の削除を自動化するためのアプリ
 ]
 
 MIDDLEWARE = [
