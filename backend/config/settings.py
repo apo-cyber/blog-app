@@ -8,12 +8,11 @@ from decouple import config
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY', default='django-insecure-your-secret-key-here')
-
+SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
 
 # Application definition
 INSTALLED_APPS = [
@@ -33,7 +32,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',  # セッションミドルウェア
-    'corsheaders.middleware.CorsMiddleware',  # CORS設定
+    'corsheaders.middleware.CorsMiddleware',  # CORS設定（CommonMiddlewareの前）
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -68,14 +67,15 @@ WSGI_APPLICATION = 'config.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+# PostgreSQLの設定
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST'),
-        'PORT': config('DB_PORT', default='5432'),
+        'NAME': config('DATABASE_NAME'),
+        'USER': config('DATABASE_USER'),
+        'PASSWORD': config('DATABASE_PASSWORD'),
+        'HOST': config('DATABASE_HOST'),
+        'PORT': config('DATABASE_PORT'),
     }
 }
 
@@ -114,15 +114,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS設定（フロントエンドとの通信を許可）
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # Next.jsのデフォルトポート
+    "http://localhost:3000",
+    'https://blog.apo-cyber.com',
 ]
 
-# Cookie認証のためのCORS設定
+# CORS設定を追加（もしなければ）
 CORS_ALLOW_CREDENTIALS = True
 
 # CSRF設定
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
+    "https://apo-cyber.com",
+    'https://blog.apo-cyber.com',
 ]
 
 # セッション設定
@@ -130,15 +133,28 @@ SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SAMESITE = 'Lax'
 
+# HTTPS用の設定に変更
+CSRF_COOKIE_SECURE = True  # Falseから変更
+SESSION_COOKIE_SECURE = True  # Falseから変更
+
+# CSRF_COOKIE_HTTPONLYを明示的に設定
+CSRF_COOKIE_HTTPONLY = False
+
+# プロキシ設定
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')  # 変更
+USE_X_FORWARDED_HOST = True
+USE_X_FORWARDED_PORT = True
+
 # 開発環境用のセキュリティ設定
 if DEBUG:
-    CSRF_COOKIE_SECURE = False
+    SECURE_SSL_REDIRECT = False
     SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
 
 # REST Framework設定
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10,
+    'PAGE_SIZE': 9,
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
@@ -148,8 +164,3 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
     ],
 }
-
-# 開発環境用のCORS設定（本番環境では適切に設定すること）
-if DEBUG:
-    # CORS_ALLOW_ALL_ORIGINS は削除（セキュリティ上良くない）
-    pass

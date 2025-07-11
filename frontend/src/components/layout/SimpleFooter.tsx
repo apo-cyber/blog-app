@@ -149,8 +149,14 @@ export function SimpleFooter() {
         <div className="flex flex-col items-center justify-center text-center gap-2">
           <img src="/cat.gif" alt="Dancing cat" className="w-32 h-auto" />
           <p className="text-gray-600 text-sm">
-            © 2025-{new Date().getFullYear()} Apo_Blog. Made with ❤️ using
-            Django & Next.js
+            <span className="hidden sm:inline">
+              © 2025-{new Date().getFullYear()} Apo_Blog. Made with ❤️ using
+              Django & Next.js
+            </span>
+            <span className="sm:hidden">
+              © 2025-{new Date().getFullYear()} Apo_Blog ❤️ using Django &
+              Next.js
+            </span>
           </p>
         </div>
       </div>

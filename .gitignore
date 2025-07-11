@@ -44,3 +44,6 @@ yarn-error.log*
 
 # === Coverage tools ===
 coverage/
+
+# === other ===
+info.md

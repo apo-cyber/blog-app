@@ -99,12 +99,18 @@ export function BlogPostCard({ post }: BlogPostCardProps) {
               disabled={likeMutation.isPending}
               className="flex items-center gap-1 hover:text-red-500 transition-colors"
             >
-              {post.is_liked ? (
+              {post.likes_count > 0 ? (
                 <HeartSolidIcon className="h-5 w-5 text-red-500" />
               ) : (
-                <HeartIcon className="h-5 w-5" />
+                <HeartIcon className="h-5 w-5 text-gray-500 hover:text-red-500" />
               )}
-              <span>{post.likes_count}</span>
+              <span
+                className={
+                  post.likes_count > 0 ? "text-red-500" : "text-gray-500"
+                }
+              >
+                {post.likes_count}
+              </span>
             </button>
           </div>
         </div>

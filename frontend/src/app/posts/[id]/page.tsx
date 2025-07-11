@@ -228,7 +228,7 @@ export default function BlogPostDetailPage() {
 
               {/* 編集・削除ボタン（著者のみ表示） */}
               {isAuthor && (
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   {/* 公開/下書きボタン */}
                   <Button
                     variant="secondary"
