@@ -30,6 +30,7 @@ import { Markdown } from "@/components/ui/Markdown";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import { ImageModal } from "@/components/ui/ImageModal";
+import CommentSection from "@/components/blog/CommentSection";
 
 export default function BlogPostDetailPage() {
   const params = useParams();
@@ -279,6 +280,9 @@ export default function BlogPostDetailPage() {
             onClose={() => setIsImageModalOpen(false)}
           />
         )}
+        <section className="bg-white rounded-lg shadow-md p-6 mt-8">
+          <CommentSection postId={postId} />
+        </section>
       </main>
     </div>
   );

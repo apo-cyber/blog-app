@@ -3,7 +3,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
-from .models import BlogPost, Tag, Like
+from .models import BlogPost, Tag, Like, Comment
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -152,3 +152,103 @@ class LikeSerializer(serializers.ModelSerializer):
         model = Like
         fields = ['id', 'user', 'blog_post', 'blog_post_title', 'created_at']
         read_only_fields = ['created_at']
+
+class CommentAuthorSerializer(serializers.ModelSerializer):
+    """コメント作成者の情報用シリアライザー"""
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'first_name', 'last_name']
+
+
+class CommentReplySerializer(serializers.ModelSerializer):
+    """返信表示用シリアライザー（ネストを避けるため簡素化）"""
+    author = CommentAuthorSerializer(read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = [
+            'id',
+            'content',
+            'author',
+            'created_at',
+            'updated_at'
+        ]
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    """コメント表示用シリアライザー"""
+    author = CommentAuthorSerializer(read_only=True)
+    replies = CommentReplySerializer(many=True, read_only=True)
+    reply_count = serializers.ReadOnlyField()
+    is_reply = serializers.ReadOnlyField()
+
+    class Meta:
+        model = Comment
+        fields = [
+            'id',
+            'content',
+            'author',
+            'parent',
+            'replies',
+            'reply_count',
+            'is_reply',
+            'created_at',
+            'updated_at'
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+
+class CommentCreateSerializer(serializers.ModelSerializer):
+    """コメント作成用シリアライザー"""
+    parent_id = serializers.IntegerField(required=False, allow_null=True)
+
+    class Meta:
+        model = Comment
+        fields = ['content', 'parent_id']
+
+    def validate_content(self, value):
+        """コメント内容のバリデーション"""
+        if len(value.strip()) < 1:
+            raise serializers.ValidationError("コメント内容を入力してください。")
+        if len(value) > 1000:
+            raise serializers.ValidationError("コメントは1000文字以内で入力してください。")
+        return value.strip()
+
+    def validate_parent_id(self, value):
+        """親コメントの存在確認"""
+        if value is not None:
+            try:
+                parent_comment = Comment.objects.get(id=value, is_active=True)
+                # 返信の返信を防ぐ（2階層まで）
+                if parent_comment.parent is not None:
+                    raise serializers.ValidationError("返信に対してさらに返信することはできません。")
+                return value
+            except Comment.DoesNotExist:
+                raise serializers.ValidationError("指定された親コメントが見つかりません。")
+        return value
+
+    def create(self, validated_data):
+        """コメント作成時の処理"""
+        parent_id = validated_data.pop('parent_id', None)
+
+        # 親コメントがある場合は設定
+        if parent_id:
+            parent_comment = Comment.objects.get(id=parent_id)
+            validated_data['parent'] = parent_comment
+
+        return Comment.objects.create(**validated_data)
+
+
+class CommentUpdateSerializer(serializers.ModelSerializer):
+    """コメント更新用シリアライザー"""
+    class Meta:
+        model = Comment
+        fields = ['content']
+
+    def validate_content(self, value):
+        """コメント内容のバリデーション"""
+        if len(value.strip()) < 1:
+            raise serializers.ValidationError("コメント内容を入力してください。")
+        if len(value) > 1000:
+            raise serializers.ValidationError("コメントは1000文字以内で入力してください。")
+        return value.strip()

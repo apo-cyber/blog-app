@@ -1,7 +1,17 @@
 // src/lib/api-functions.ts
 
 import { api } from "./api";
-import { BlogPost, BlogPostInput, Tag, PaginatedResponse, User } from "@/types";
+import {
+  BlogPost,
+  BlogPostInput,
+  Tag,
+  PaginatedResponse,
+  User,
+  Comment,
+  CommentCreate,
+  CommentUpdate,
+  CommentCount,
+} from "@/types";
 
 // 認証関連のAPI関数
 
@@ -150,4 +160,45 @@ export const createTag = async (name: string): Promise<Tag> => {
 // タグを削除
 export const deleteTag = async (id: number): Promise<void> => {
   await api.delete(`/tags/${id}/`);
+};
+
+// コメント関連のAPI関数
+export const getComments = async (postId: number): Promise<Comment[]> => {
+  const response = await api.get(`/posts/${postId}/comments/`);
+  return response.data.results || response.data;
+};
+
+export const createComment = async (
+  postId: number,
+  commentData: CommentCreate
+): Promise<Comment> => {
+  const response = await api.post(`/posts/${postId}/comments/`, commentData);
+  return response.data;
+};
+
+export const createReply = async (
+  commentId: number,
+  replyData: CommentCreate
+): Promise<Comment> => {
+  const response = await api.post(`/comments/${commentId}/reply/`, replyData);
+  return response.data;
+};
+
+export const getCommentCount = async (
+  postId: number
+): Promise<CommentCount> => {
+  const response = await api.get(`/posts/${postId}/comments/count/`);
+  return response.data;
+};
+
+export const updateComment = async (
+  commentId: number,
+  commentData: CommentUpdate
+): Promise<Comment> => {
+  const response = await api.put(`/comments/${commentId}/`, commentData);
+  return response.data;
+};
+
+export const deleteComment = async (commentId: number): Promise<void> => {
+  await api.delete(`/comments/${commentId}/`);
 };

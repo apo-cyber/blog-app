@@ -3,6 +3,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.core.validators import MinLengthValidator
 
 class Tag(models.Model):
     """タグモデル：ブログ記事を分類するためのタグ"""
@@ -104,3 +105,68 @@ class Like(models.Model):
 
     def __str__(self):
         return f'{self.user.username} が {self.blog_post.title} にいいね'
+
+class Comment(models.Model):
+    """コメントモデル：ブログ記事に対するコメントと返信機能"""
+    blog_post = models.ForeignKey(
+        BlogPost,
+        on_delete=models.CASCADE,
+        related_name='comments',
+        verbose_name='ブログ記事'
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='comments',
+        verbose_name='投稿者'
+    )
+    parent = models.ForeignKey(
+        'self',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='replies',
+        verbose_name='親コメント'
+    )
+    content = models.TextField(
+        validators=[MinLengthValidator(1)],
+        verbose_name='コメント内容',
+        help_text="コメント内容を入力してください"
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='作成日時')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='更新日時')
+    is_active = models.BooleanField(default=True, verbose_name='有効フラグ')
+
+    class Meta:
+        verbose_name = 'コメント'
+        verbose_name_plural = 'コメント'
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['blog_post', '-created_at']),
+            models.Index(fields=['parent', '-created_at']),
+        ]
+
+    def __str__(self):
+        if self.parent:
+            return f'{self.author.username} が {self.parent.author.username} に返信: {self.content[:50]}...'
+        return f'{self.author.username}: {self.content[:50]}...'
+
+    @property
+    def is_reply(self):
+        """返信かどうかを判定"""
+        return self.parent is not None
+
+    @property
+    def reply_count(self):
+        """返信数を取得"""
+        return self.replies.filter(is_active=True).count()
+
+    def get_thread(self):
+        """スレッド全体を取得（親コメント + すべての返信）"""
+        if self.parent:
+            return self.parent.get_thread()
+        return self
+
+    def get_all_replies(self):
+        """すべての返信を階層的に取得"""
+        return self.replies.filter(is_active=True).select_related('author').order_by('created_at')
