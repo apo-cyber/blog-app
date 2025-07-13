@@ -7,6 +7,7 @@ import {
   PlusIcon,
   HomeIcon,
   UserIcon,
+  InformationCircleIcon,
   ArrowRightOnRectangleIcon,
   ArrowLeftOnRectangleIcon,
   Bars3Icon,
@@ -28,6 +29,12 @@ export function Header() {
 
   const navItems = [
     { href: "/", label: "ホーム", icon: HomeIcon, requireAuth: false },
+    {
+      href: "/about",
+      label: "アバウト",
+      icon: InformationCircleIcon,
+      requireAuth: false,
+    },
     {
       href: "/posts/new",
       label: "新規投稿",
