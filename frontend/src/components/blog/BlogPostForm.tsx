@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/Button";
 import { useTags, useCreateTag } from "@/hooks/useTags";
 import { BlogPost, BlogPostInput } from "@/types";
 import { Markdown } from "@/components/ui/Markdown";
+import heic2any from "heic2any";
 
 // バリデーションスキーマ
 const blogPostSchema = z.object({
@@ -72,16 +73,44 @@ export function BlogPostForm({
   const selectedTagIds = watch("tag_ids");
 
   // 画像選択処理
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setImageFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    let processedFile = file;
+
+    // HEICファイルの場合はJPEGに変換
+    if (
+      file.type === "image/heic" ||
+      file.name.toLowerCase().endsWith(".heic")
+    ) {
+      try {
+        const convertedBlob = await heic2any({
+          blob: file,
+          toType: "image/jpeg",
+          quality: 0.8,
+        });
+
+        const convertedFile = new File(
+          [convertedBlob as Blob],
+          file.name.replace(/\.heic$/i, ".jpg"),
+          { type: "image/jpeg" }
+        );
+
+        processedFile = convertedFile;
+      } catch (error) {
+        console.error("HEIC変換エラー:", error);
+        alert("HEIC画像の変換に失敗しました");
+        return;
+      }
     }
+
+    setImageFile(processedFile);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result as string);
+    };
+    reader.readAsDataURL(processedFile);
   };
 
   // 画像削除処理
@@ -229,7 +258,7 @@ export function BlogPostForm({
               </p>
               <input
                 type="file"
-                accept="image/*"
+                accept="image/*,.heic,.heif" // HEIC/HEIF形式も受け入れる
                 onChange={handleImageChange}
                 className="sr-only"
               />
