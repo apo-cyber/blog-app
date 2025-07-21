@@ -182,7 +182,7 @@ export default function AboutPage() {
               <div className="space-y-3">
                 <div className="flex items-center space-x-3">
                   <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                  <span className="text-gray-700">React / Next.js</span>
+                  <span className="text-gray-700">React/Next.js</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="w-3 h-3 bg-blue-400 rounded-full"></div>
@@ -217,7 +217,7 @@ export default function AboutPage() {
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                  <span className="text-gray-700">哲学・宗教</span>
+                  <span className="text-gray-700">哲学・禅</span>
                 </div>
               </div>
             </div>
