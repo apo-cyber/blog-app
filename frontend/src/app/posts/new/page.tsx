@@ -4,12 +4,26 @@
 
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useCreateBlogPost } from "@/hooks/useBlogPosts";
-import { BlogPostForm } from "@/components/blog/BlogPostForm";
 import { Header } from "@/components/layout/Header";
 import { Card } from "@/components/ui/Card";
 import { BlogPostInput } from "@/types";
+
+// BlogPostFormをdynamic importで読み込み（SSR無効化）
+const BlogPostForm = dynamic(
+  () =>
+    import("@/components/blog/BlogPostForm").then((mod) => ({
+      default: mod.BlogPostForm,
+    })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="text-center py-4">フォームを読み込み中...</div>
+    ),
+  }
+);
 
 export default function NewPostPage() {
   const router = useRouter();
@@ -19,8 +33,9 @@ export default function NewPostPage() {
     try {
       const newPost = await createMutation.mutateAsync(data);
       router.push(`/posts/${newPost.id}`);
-    } catch (error) {
+    } catch {
       // エラーはuseMutationで処理される
+      console.log("Error handled by useMutation");
     }
   };
 
