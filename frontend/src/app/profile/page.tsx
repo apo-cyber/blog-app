@@ -45,18 +45,21 @@ export default function ProfilePage() {
     {
       id: "my-posts" as const,
       label: "自分の投稿",
+      shortLabel: "投稿", // 短縮版追加
       icon: DocumentTextIcon,
       count: myPosts?.filter((post) => post.is_published).length || 0,
     },
     {
       id: "drafts" as const,
       label: "下書き",
+      shortLabel: "下書",
       icon: DocumentDuplicateIcon,
       count: myPosts?.filter((post) => !post.is_published).length || 0,
     },
     {
       id: "liked-posts" as const,
       label: "いいねした記事",
+      shortLabel: "いいね",
       icon: HeartIcon,
       count: likedPosts?.length || 0,
     },
@@ -97,7 +100,8 @@ export default function ProfilePage() {
                     }`}
                   >
                     <Icon className="h-5 w-5" />
-                    {tab.label}
+                    <span className="hidden sm:inline">{tab.label}</span>
+                    <span className="sm:hidden text-sm">{tab.shortLabel}</span>
                     <span className="ml-1 bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full text-xs">
                       {tab.count}
                     </span>

@@ -30,6 +30,7 @@ import { Markdown } from "@/components/ui/Markdown";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import { ImageModal } from "@/components/ui/ImageModal";
+import CommentSection from "@/components/blog/CommentSection";
 
 export default function BlogPostDetailPage() {
   const params = useParams();
@@ -228,7 +229,7 @@ export default function BlogPostDetailPage() {
 
               {/* 編集・削除ボタン（著者のみ表示） */}
               {isAuthor && (
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   {/* 公開/下書きボタン */}
                   <Button
                     variant="secondary"
@@ -279,6 +280,9 @@ export default function BlogPostDetailPage() {
             onClose={() => setIsImageModalOpen(false)}
           />
         )}
+        <section className="bg-white rounded-lg shadow-md p-6 mt-8">
+          <CommentSection postId={postId} />
+        </section>
       </main>
     </div>
   );

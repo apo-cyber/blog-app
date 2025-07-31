@@ -1,16 +1,23 @@
-// src/components/blog/BlogPostCard.tsx
+// src/components/blog/BlogPostCard.tsx の更新版
 
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
-import { HeartIcon, ClockIcon, TagIcon } from "@heroicons/react/24/outline";
+import {
+  HeartIcon,
+  ClockIcon,
+  TagIcon,
+  ChatBubbleLeftIcon,
+} from "@heroicons/react/24/outline";
 import { HeartIcon as HeartSolidIcon } from "@heroicons/react/24/solid";
 import { BlogPost } from "@/types";
 import { Card } from "@/components/ui/Card";
 import { useLikeBlogPost } from "@/hooks/useBlogPosts";
+import { getCommentCount } from "@/lib/api-functions";
 
 interface BlogPostCardProps {
   post: BlogPost;
@@ -18,6 +25,21 @@ interface BlogPostCardProps {
 
 export function BlogPostCard({ post }: BlogPostCardProps) {
   const likeMutation = useLikeBlogPost();
+  const [commentCount, setCommentCount] = useState<number>(0);
+
+  useEffect(() => {
+    const fetchCommentCount = async () => {
+      try {
+        const { count } = await getCommentCount(post.id);
+        setCommentCount(count);
+      } catch (error) {
+        console.error("コメント数取得エラー:", error);
+        // エラーの場合は0のまま
+      }
+    };
+
+    fetchCommentCount();
+  }, [post.id]);
 
   const handleLike = (e: React.MouseEvent) => {
     e.preventDefault(); // Linkのクリックを防ぐ
@@ -93,19 +115,34 @@ export function BlogPostCard({ post }: BlogPostCardProps) {
               </div>
             </div>
 
-            {/* いいね */}
-            <button
-              onClick={handleLike}
-              disabled={likeMutation.isPending}
-              className="flex items-center gap-1 hover:text-red-500 transition-colors"
-            >
-              {post.is_liked ? (
-                <HeartSolidIcon className="h-5 w-5 text-red-500" />
-              ) : (
-                <HeartIcon className="h-5 w-5" />
-              )}
-              <span>{post.likes_count}</span>
-            </button>
+            {/* いいねとコメント */}
+            <div className="flex items-center gap-3">
+              {/* コメント数 */}
+              <div className="flex items-center gap-1">
+                <ChatBubbleLeftIcon className="h-4 w-4 text-gray-500" />
+                <span className="text-gray-500">{commentCount}</span>
+              </div>
+
+              {/* いいね */}
+              <button
+                onClick={handleLike}
+                disabled={likeMutation.isPending}
+                className="flex items-center gap-1 hover:text-red-500 transition-colors"
+              >
+                {post.likes_count > 0 ? (
+                  <HeartSolidIcon className="h-5 w-5 text-red-500" />
+                ) : (
+                  <HeartIcon className="h-5 w-5 text-gray-500 hover:text-red-500" />
+                )}
+                <span
+                  className={
+                    post.likes_count > 0 ? "text-red-500" : "text-gray-500"
+                  }
+                >
+                  {post.likes_count}
+                </span>
+              </button>
+            </div>
           </div>
         </div>
       </Card>

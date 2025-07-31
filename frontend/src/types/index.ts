@@ -61,3 +61,35 @@ export interface ApiError {
   detail?: string;
   [key: string]: any;
 }
+
+export interface CommentAuthor {
+  id: number;
+  username: string;
+  first_name: string;
+  last_name: string;
+}
+
+export interface Comment {
+  id: number;
+  content: string;
+  author: CommentAuthor;
+  parent: number | null;
+  replies: Comment[];
+  reply_count: number;
+  is_reply: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CommentCreate {
+  content: string;
+}
+
+export interface CommentUpdate {
+  // この型を追加
+  content: string;
+}
+
+export interface CommentCount {
+  count: number;
+}
