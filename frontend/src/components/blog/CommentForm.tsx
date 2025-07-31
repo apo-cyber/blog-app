@@ -7,6 +7,7 @@ import { Comment } from "@/types";
 import { createComment } from "@/lib/api-functions";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/Button";
+import Link from "next/link";
 
 interface CommentFormProps {
   postId: number;
@@ -71,12 +72,12 @@ export default function CommentForm({
       <div className="bg-gray-50 p-4 rounded-lg text-center">
         <p className="text-gray-600">
           コメントするには
-          <a
-            href="/auth/login"
+          <Link
+            href="/login"
             className="text-blue-600 hover:text-blue-800 ml-1"
           >
             ログイン
-          </a>
+          </Link>
           してください
         </p>
       </div>

@@ -40,7 +40,14 @@ export default function CommentItem({
       const updatedComment = await updateComment(comment.id, {
         content: editContent.trim(),
       });
-      onUpdate(updatedComment);
+      // DB更新結果にidが含まれていない場合、元のコメント情報をマージ
+      const completeUpdatedComment = {
+        ...comment, // 元のコメントの全情報を保持
+        ...updatedComment, // DB更新結果で上書き
+        id: comment.id, // idを確実に保持
+      };
+      onUpdate(completeUpdatedComment);
+
       setIsEditing(false);
     } catch (error) {
       console.error("コメント更新エラー:", error);
