@@ -113,11 +113,14 @@ export default function BlogPostDetailPage() {
         {/* 戻るボタン */}
         <Link
           href="/"
-          className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-6"
+          className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-1"
         >
           <ArrowLeftIcon className="h-5 w-5 mr-2" />
           記事一覧に戻る
         </Link>
+        <div className="font-medium text-gray-600 text-right mb-1">
+          画像をクリックすると拡大表示
+        </div>
 
         <article className="bg-white rounded-lg shadow-md overflow-hidden">
           {/* アイキャッチ画像 */}
