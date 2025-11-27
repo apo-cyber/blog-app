@@ -15,7 +15,7 @@ import axios, {
  */
 
 export const api = axios.create({
-  baseURL: "/api",
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "/api",
   withCredentials: true,
   // NOTE: ここで Content-Type を固定しないこと！
 });

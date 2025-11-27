@@ -108,6 +108,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://45.32.15.75",
     "http://blog.apo-cyber.com",
     "https://blog.apo-cyber.com",
+    "http://localhost:3000",
 ]
 CORS_ALLOW_CREDENTIALS = True
 
@@ -115,6 +116,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://45.32.15.75",
     "http://blog.apo-cyber.com",
     "https://blog.apo-cyber.com",
+    "http://localhost:3000",
 ]
 
 SESSION_COOKIE_SAMESITE = "Lax"
@@ -125,10 +127,10 @@ CSRF_COOKIE_HTTPONLY = False  # 管理画面で必要
 # ==========================
 # HTTPS / プロキシ設定
 # ==========================
-# 開発中にHTTPアクセスする場合は False に変更
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+# 開発中はFalse、本番はTrue
+SECURE_SSL_REDIRECT = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 USE_X_FORWARDED_HOST = True
