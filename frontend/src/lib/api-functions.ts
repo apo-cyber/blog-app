@@ -1,5 +1,3 @@
-// src/lib/api-functions.ts
-
 import { api } from "./api";
 import {
   BlogPost,
@@ -13,7 +11,9 @@ import {
   CommentCount,
 } from "@/types";
 
+// =======================
 // 認証関連のAPI関数
+// =======================
 
 // サインアップ
 export const signup = async (data: {
@@ -26,7 +26,9 @@ export const signup = async (data: {
   return response.data;
 };
 
+// =======================
 // ブログ記事関連のAPI関数
+// =======================
 
 // 記事一覧を取得
 export const fetchBlogPosts = async (params?: {
@@ -65,11 +67,8 @@ export const createBlogPost = async (
     formData.append("image", data.image);
   }
 
-  const response = await api.post("/posts/", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+  // Content-Type は指定しない（ブラウザが自動で boundary を付与）
+  const response = await api.post("/posts/", formData);
   return response.data;
 };
 
@@ -93,11 +92,8 @@ export const updateBlogPost = async (
     formData.append("image", data.image);
   }
 
-  const response = await api.patch(`/posts/${id}/`, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+  // Content-Type は指定しない（ブラウザが自動で boundary を付与）
+  const response = await api.patch(`/posts/${id}/`, formData);
   return response.data;
 };
 
@@ -141,7 +137,9 @@ export const fetchLikedPosts = async (): Promise<BlogPost[]> => {
   return response.data;
 };
 
+// =======================
 // タグ関連のAPI関数
+// =======================
 
 // タグ一覧を取得
 export const fetchTags = async (search?: string): Promise<Tag[]> => {
@@ -162,7 +160,9 @@ export const deleteTag = async (id: number): Promise<void> => {
   await api.delete(`/tags/${id}/`);
 };
 
+// =======================
 // コメント関連のAPI関数
+// =======================
 export const getComments = async (postId: number): Promise<Comment[]> => {
   const response = await api.get(`/posts/${postId}/comments/`);
   return response.data.results || response.data;

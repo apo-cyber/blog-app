@@ -1,21 +1,20 @@
-# config/settings.py
-
 import os
 from pathlib import Path
 from decouple import config
 import pillow_heif
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: keep the secret key used in production secret!
+# ==========================
+# 基本設定
+# ==========================
 SECRET_KEY = config("SECRET_KEY")
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", default=True, cast=bool)
-
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1").split(",")
 
-# Application definition
+# ==========================
+# アプリケーション
+# ==========================
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -23,17 +22,17 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # 追加するアプリ
+    # 追加アプリ
     "rest_framework",
     "corsheaders",
     "blog",
-    "django_cleanup",  # 画像の削除を自動化するためのアプリ
+    "django_cleanup",  # 画像の削除を自動化
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",  # セッションミドルウェア
-    "corsheaders.middleware.CorsMiddleware",  # CORS設定（CommonMiddlewareの前）
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",  # CommonMiddlewareの前に
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -61,14 +60,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-# Database
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-# PostgreSQLの設定
+# ==========================
+# データベース
+# ==========================
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -80,79 +74,69 @@ DATABASES = {
     }
 }
 
-# Password validation
+# ==========================
+# 認証
+# ==========================
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
-    },
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-# Internationalization
+# ==========================
+# 国際化
+# ==========================
 LANGUAGE_CODE = "ja"
 TIME_ZONE = "Asia/Tokyo"
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-STATIC_URL = "static/"
+# ==========================
+# 静的・メディアファイル
+# ==========================
+STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
-# Media files (アップロードされた画像など)
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-# Default primary key field type
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-# CORS設定（フロントエンドとの通信を許可）
+# ==========================
+# CORS / CSRF 設定
+# ==========================
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
+    "http://45.32.15.75",
+    "http://blog.apo-cyber.com",
     "https://blog.apo-cyber.com",
 ]
-
-# CORS設定を追加（もしなければ）
 CORS_ALLOW_CREDENTIALS = True
 
-# CSRF設定
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:3000",
-    "https://apo-cyber.com",
+    "http://45.32.15.75",
+    "http://blog.apo-cyber.com",
     "https://blog.apo-cyber.com",
 ]
 
-# セッション設定
 SESSION_COOKIE_SAMESITE = "Lax"
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_HTTPONLY = False  # 管理画面で必要
 
-# HTTPS用の設定に変更
-CSRF_COOKIE_SECURE = True  # Falseから変更
-SESSION_COOKIE_SECURE = True  # Falseから変更
+# ==========================
+# HTTPS / プロキシ設定
+# ==========================
+# 開発中にHTTPアクセスする場合は False に変更
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
-# CSRF_COOKIE_HTTPONLYを明示的に設定
-CSRF_COOKIE_HTTPONLY = False
-
-# プロキシ設定
-SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")  # 変更
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 USE_X_FORWARDED_HOST = True
 USE_X_FORWARDED_PORT = True
 
-# 開発環境用のセキュリティ設定
-if DEBUG:
-    SECURE_SSL_REDIRECT = False
-    SESSION_COOKIE_SECURE = False
-    CSRF_COOKIE_SECURE = False
-
-# REST Framework設定
+# ==========================
+# Django REST Framework
+# ==========================
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 9,
@@ -166,6 +150,14 @@ REST_FRAMEWORK = {
     ],
 }
 
-pillow_heif.register_heif_opener()
-
+# ==========================
+# ファイルアップロード設定
+# ==========================
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 25 * 1024 * 1024  # 25MB（安全余裕）
+
+# ==========================
+# その他
+# ==========================
+pillow_heif.register_heif_opener()
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

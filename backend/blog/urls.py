@@ -2,6 +2,7 @@
 
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+from django.views.generic import RedirectView
 from . import views
 
 # DRFのルーターを使用してURLを自動生成

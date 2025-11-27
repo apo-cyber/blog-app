@@ -1,54 +1,62 @@
-// src/lib/api.ts
+// frontend/src/lib/api.ts
+import axios, {
+  AxiosError,
+  InternalAxiosRequestConfig,
+  AxiosRequestHeaders,
+} from "axios";
 
-import axios from "axios";
+/**
+ * 共通APIクライアント
+ * - baseURL は /api（Nginx が /api を Django にプロキシ）
+ * - withCredentials で Cookie を送信（SessionAuth を想定）
+ * - FormData のときは Content-Type を削除して boundary をブラウザに任せる
+ * - それ以外は application/json を付与
+ * - CSRF Token を Cookie から拾って送る
+ */
 
-// APIのベースURL
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
-
-// axiosのインスタンスを作成
 export const api = axios.create({
-  baseURL: API_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-  withCredentials: true, // Cookie認証のために必要
+  baseURL: "/api",
+  withCredentials: true,
+  // NOTE: ここで Content-Type を固定しないこと！
 });
 
-// リクエストインターセプター
-api.interceptors.request.use(
-  (config) => {
-    // CSRFトークンの取得（Djangoのcsrfトークンを使用）
-    const csrfToken = getCookie("csrftoken");
-    if (csrfToken) {
-      config.headers["X-CSRFToken"] = csrfToken;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// レスポンスインターセプター（エラーハンドリング）
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      // 認証エラーの場合の処理
-      if (window.location.pathname !== "/login") {
-        window.location.href = "/login";
-      }
-    }
-    return Promise.reject(error);
-  }
-);
-
-// Cookieを取得するヘルパー関数
 function getCookie(name: string): string | null {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
   if (parts.length === 2) {
-    return parts.pop()?.split(";").shift() || null;
+    return parts.pop()!.split(";").shift() || null;
   }
   return null;
 }
+
+function isFormDataBody(data: unknown): data is FormData {
+  return typeof FormData !== "undefined" && data instanceof FormData;
+}
+
+api.interceptors.request.use(
+  (config: InternalAxiosRequestConfig) => {
+    // headers を正しく初期化（Axios v1 の型に合わせる）
+    const headers: AxiosRequestHeaders = (config.headers ??
+      {}) as AxiosRequestHeaders;
+
+    if (isFormDataBody(config.data)) {
+      // FormData の場合は Content-Type を外す（boundary 自動付与）
+      delete (headers as any)["Content-Type"];
+      delete (headers as any)["content-type"];
+    } else {
+      if (!(headers as any)["Content-Type"]) {
+        headers["Content-Type"] = "application/json";
+      }
+    }
+
+    // CSRF
+    const csrftoken = getCookie("csrftoken");
+    if (csrftoken) {
+      headers["X-CSRFToken"] = csrftoken;
+    }
+
+    config.headers = headers;
+    return config;
+  },
+  (error: AxiosError) => Promise.reject(error)
+);
