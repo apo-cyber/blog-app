@@ -8,7 +8,7 @@ import { Providers } from "./providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Blog App",
+  title: "Blog Apo",
   description: "Next.js 15 と Django REST Framework で作るブログアプリ",
 };
 

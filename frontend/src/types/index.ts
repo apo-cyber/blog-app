@@ -20,10 +20,9 @@ export interface BlogPost {
   title: string;
   description: string;
   image: string | null;
-  author: User;
+  image2: string | null;
   tags: Tag[];
   likes_count: number;
-  is_liked: boolean;
   created_at: string;
   updated_at: string;
   is_published: boolean;

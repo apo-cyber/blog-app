@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { format } from "date-fns";
@@ -10,57 +10,28 @@ import {
   ClockIcon,
   TagIcon,
   ArrowLeftIcon,
-  PencilIcon,
-  TrashIcon,
-  EyeIcon,
-  EyeSlashIcon,
 } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartSolidIcon } from "@heroicons/react/24/solid";
-import {
-  useBlogPost,
-  useLikeBlogPost,
-  useDeleteBlogPost,
-  useTogglePublishBlogPost,
-} from "@/hooks/useBlogPosts";
-import { useAuth } from "@/contexts/AuthContext";
+import { useBlogPost, useLikeBlogPost, useLikeStatus } from "@/hooks/useBlogPosts";
 import { Loading } from "@/components/ui/Loading";
-import { Button } from "@/components/ui/Button";
 import { Header } from "@/components/layout/Header";
 import { Markdown } from "@/components/ui/Markdown";
-import toast from "react-hot-toast";
 import { useState } from "react";
 import { ImageModal } from "@/components/ui/ImageModal";
-import CommentSection from "@/components/blog/CommentSection";
 
 export default function BlogPostDetailPage() {
   const params = useParams();
-  const router = useRouter();
-  const { user } = useAuth(); // フックは必ず最初に呼び出す
   const postId = Number(params.id);
 
-  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const { data: post, isLoading, error } = useBlogPost(postId);
+  const { data: likeStatus } = useLikeStatus(postId);
   const likeMutation = useLikeBlogPost();
-  const deleteMutation = useDeleteBlogPost();
-  const togglePublishMutation = useTogglePublishBlogPost();
 
   const handleLike = () => {
-    if (post) {
-      likeMutation.mutate({ id: post.id, isLiked: post.is_liked });
-    }
-  };
-
-  const handleTogglePublish = async () => {
-    if (!post) return;
-
-    try {
-      await togglePublishMutation.mutateAsync({
-        id: post.id,
-        isPublished: !post.is_published,
-      });
-    } catch (error) {
-      // エラーはuseMutationで処理される
+    if (likeStatus) {
+      likeMutation.mutate({ id: postId, isLiked: likeStatus.is_liked });
     }
   };
 
@@ -89,21 +60,7 @@ export default function BlogPostDetailPage() {
     );
   }
 
-  const handleDelete = async () => {
-    if (!post) return;
-
-    if (window.confirm("この記事を削除してもよろしいですか？")) {
-      try {
-        await deleteMutation.mutateAsync(post.id);
-        router.push("/");
-      } catch (error) {
-        // エラーはuseMutationで処理される
-      }
-    }
-  };
-
-  // 認証チェック
-  const isAuthor = user && post && user.username === post.author.username;
+  const hasImages = post.image || post.image2;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -113,54 +70,60 @@ export default function BlogPostDetailPage() {
         {/* 戻るボタン */}
         <Link
           href="/"
-          className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-1"
+          className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4"
         >
           <ArrowLeftIcon className="h-5 w-5 mr-2" />
           記事一覧に戻る
         </Link>
-        <div className="font-medium text-gray-600 text-right mb-1">
-          画像をクリックすると拡大表示
-        </div>
 
         <article className="bg-white rounded-lg shadow-md overflow-hidden">
-          {/* アイキャッチ画像 */}
-          {post.image && (
-            <div
-              className="relative h-96 w-full cursor-pointer"
-              onClick={() => setIsImageModalOpen(true)}
-            >
-              <Image
-                src={post.image}
-                alt={post.title}
-                fill
-                className="object-cover"
-                priority
-                sizes="(max-width: 1024px) 100vw, 1024px"
-              />
+          {/* 画像エリア */}
+          {hasImages && (
+            <div className="p-4">
+              <p className="text-sm text-gray-500 mb-2 text-right">
+                画像をクリックすると拡大表示
+              </p>
+              <div
+                className={`grid gap-4 ${
+                  post.image && post.image2 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"
+                }`}
+              >
+                {post.image && (
+                  <div
+                    className="relative h-64 md:h-80 w-full cursor-pointer rounded-lg overflow-hidden bg-gray-100"
+                    onClick={() => setSelectedImage(post.image)}
+                  >
+                    <Image
+                      src={post.image}
+                      alt={`${post.title} - 画像1`}
+                      fill
+                      className="object-cover hover:scale-105 transition-transform duration-300"
+                      priority
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      unoptimized
+                    />
+                  </div>
+                )}
+                {post.image2 && (
+                  <div
+                    className="relative h-64 md:h-80 w-full cursor-pointer rounded-lg overflow-hidden bg-gray-100"
+                    onClick={() => setSelectedImage(post.image2)}
+                  >
+                    <Image
+                      src={post.image2}
+                      alt={`${post.title} - 画像2`}
+                      fill
+                      className="object-cover hover:scale-105 transition-transform duration-300"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      unoptimized
+                    />
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
           <div className="p-8">
-            {/* 下書きバッジ */}
-            {!post.is_published && (
-              <div className="mb-4">
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
-                  <svg
-                    className="mr-1.5 h-4 w-4"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  この記事は下書きです
-                </span>
-              </div>
-            )}
-
             {/* タイトル */}
             <h1 className="text-3xl font-bold text-gray-900 mb-4">
               {post.title}
@@ -168,9 +131,6 @@ export default function BlogPostDetailPage() {
 
             {/* メタ情報 */}
             <div className="flex flex-wrap items-center gap-4 text-gray-600 mb-6">
-              {/* 著者 */}
-              <span className="font-medium">{post.author.username}</span>
-
               {/* 投稿日時 */}
               <div className="flex items-center gap-1">
                 <ClockIcon className="h-4 w-4" />
@@ -214,78 +174,37 @@ export default function BlogPostDetailPage() {
               <Markdown content={post.description} />
             </div>
 
-            {/* アクションボタン */}
-            <div className="flex items-center justify-between pt-6 border-t">
-              {/* いいねボタン */}
+            {/* いいねボタン */}
+            <div className="flex items-center pt-6 border-t">
               <button
                 onClick={handleLike}
                 disabled={likeMutation.isPending}
                 className="flex items-center gap-2 text-gray-700 hover:text-red-500 transition-colors"
               >
-                {post.is_liked ? (
+                {likeStatus?.is_liked ? (
                   <HeartSolidIcon className="h-6 w-6 text-red-500" />
                 ) : (
                   <HeartIcon className="h-6 w-6" />
                 )}
-                <span className="font-medium">{post.likes_count}</span>
+                <span className="font-medium">
+                  {likeStatus?.likes_count ?? post.likes_count}
+                </span>
               </button>
-
-              {/* 編集・削除ボタン（著者のみ表示） */}
-              {isAuthor && (
-                <div className="flex flex-col sm:flex-row gap-2">
-                  {/* 公開/下書きボタン */}
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={handleTogglePublish}
-                    disabled={togglePublishMutation.isPending}
-                  >
-                    {post.is_published ? (
-                      <>
-                        <EyeSlashIcon className="h-4 w-4 mr-1" />
-                        下書きに戻す
-                      </>
-                    ) : (
-                      <>
-                        <EyeIcon className="h-4 w-4 mr-1" />
-                        公開する
-                      </>
-                    )}
-                  </Button>
-
-                  <Link href={`/posts/${post.id}/edit`}>
-                    <Button variant="secondary" size="sm">
-                      <PencilIcon className="h-4 w-4 mr-1" />
-                      編集
-                    </Button>
-                  </Link>
-
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    onClick={handleDelete}
-                    disabled={deleteMutation.isPending}
-                  >
-                    <TrashIcon className="h-4 w-4 mr-1" />
-                    削除
-                  </Button>
-                </div>
-              )}
             </div>
           </div>
         </article>
-        {post.image && (
+
+        {/* 画像モーダル */}
+        {selectedImage && (
           <ImageModal
-            src={post.image}
-            alt="アイキャッチ画像"
+            src={selectedImage}
+            alt="拡大画像"
             caption={post.title}
-            isOpen={isImageModalOpen}
-            onClose={() => setIsImageModalOpen(false)}
+            isOpen={!!selectedImage}
+            onClose={() => setSelectedImage(null)}
           />
         )}
-        <section className="bg-white rounded-lg shadow-md p-6 mt-8">
-          <CommentSection postId={postId} />
-        </section>
+
       </main>
     </div>
   );

@@ -9,24 +9,25 @@ const nextConfig = {
     ignoreBuildErrors: false,
   },
   images: {
-    domains: ["blog.apo-cyber.com", "localhost"],
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "8000",
+        pathname: "/media/**",
+      },
+      {
+        protocol: "http",
+        hostname: "blog.apo-cyber.com",
+        pathname: "/media/**",
+      },
+      {
+        protocol: "https",
+        hostname: "blog.apo-cyber.com",
+        pathname: "/media/**",
+      },
+    ],
   },
 };
 
 module.exports = nextConfig;
-
-// /** @type {import('next').NextConfig} */
-// const nextConfig = {
-//   images: {
-//     remotePatterns: [
-//       {
-//         protocol: "http",
-//         hostname: "localhost",
-//         port: "8000",
-//         pathname: "/media/**",
-//       },
-//     ],
-//   },
-// };
-
-// module.exports = nextConfig;

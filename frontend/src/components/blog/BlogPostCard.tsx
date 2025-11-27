@@ -1,23 +1,16 @@
-// src/components/blog/BlogPostCard.tsx の更新版
+// src/components/blog/BlogPostCard.tsx
 
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
-import {
-  HeartIcon,
-  ClockIcon,
-  TagIcon,
-  ChatBubbleLeftIcon,
-} from "@heroicons/react/24/outline";
+import { HeartIcon, ClockIcon, TagIcon } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartSolidIcon } from "@heroicons/react/24/solid";
 import { BlogPost } from "@/types";
 import { Card } from "@/components/ui/Card";
-import { useLikeBlogPost } from "@/hooks/useBlogPosts";
-import { getCommentCount } from "@/lib/api-functions";
+import { useLikeBlogPost, useLikeStatus } from "@/hooks/useBlogPosts";
 
 interface BlogPostCardProps {
   post: BlogPost;
@@ -25,39 +18,32 @@ interface BlogPostCardProps {
 
 export function BlogPostCard({ post }: BlogPostCardProps) {
   const likeMutation = useLikeBlogPost();
-  const [commentCount, setCommentCount] = useState<number>(0);
-
-  useEffect(() => {
-    const fetchCommentCount = async () => {
-      try {
-        const { count } = await getCommentCount(post.id);
-        setCommentCount(count);
-      } catch (error) {
-        console.error("コメント数取得エラー:", error);
-        // エラーの場合は0のまま
-      }
-    };
-
-    fetchCommentCount();
-  }, [post.id]);
+  const { data: likeStatus } = useLikeStatus(post.id);
 
   const handleLike = (e: React.MouseEvent) => {
     e.preventDefault(); // Linkのクリックを防ぐ
-    likeMutation.mutate({ id: post.id, isLiked: post.is_liked });
+    if (likeStatus) {
+      likeMutation.mutate({ id: post.id, isLiked: likeStatus.is_liked });
+    }
   };
+
+  const isLiked = likeStatus?.is_liked ?? false;
+  const likesCount = likeStatus?.likes_count ?? post.likes_count;
 
   return (
     <Link href={`/posts/${post.id}`}>
       <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full flex flex-col">
         {/* 画像 */}
         {post.image && (
-          <div className="relative h-48 w-full">
+          <div className="relative h-48 w-full bg-gray-100">
             <Image
               src={post.image}
               alt={post.title}
               fill
               className="object-cover"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              loading="eager"
+              unoptimized
             />
           </div>
         )}
@@ -101,9 +87,6 @@ export function BlogPostCard({ post }: BlogPostCardProps) {
           {/* メタ情報 */}
           <div className="flex items-center justify-between text-sm text-gray-500">
             <div className="flex items-center gap-4">
-              {/* 著者 */}
-              <span>{post.author.username}</span>
-
               {/* 投稿日時 */}
               <div className="flex items-center gap-1">
                 <ClockIcon className="h-4 w-4" />
@@ -115,34 +98,21 @@ export function BlogPostCard({ post }: BlogPostCardProps) {
               </div>
             </div>
 
-            {/* いいねとコメント */}
-            <div className="flex items-center gap-3">
-              {/* コメント数 */}
-              <div className="flex items-center gap-1">
-                <ChatBubbleLeftIcon className="h-4 w-4 text-gray-500" />
-                <span className="text-gray-500">{commentCount}</span>
-              </div>
-
-              {/* いいね */}
-              <button
-                onClick={handleLike}
-                disabled={likeMutation.isPending}
-                className="flex items-center gap-1 hover:text-red-500 transition-colors"
-              >
-                {post.likes_count > 0 ? (
-                  <HeartSolidIcon className="h-5 w-5 text-red-500" />
-                ) : (
-                  <HeartIcon className="h-5 w-5 text-gray-500 hover:text-red-500" />
-                )}
-                <span
-                  className={
-                    post.likes_count > 0 ? "text-red-500" : "text-gray-500"
-                  }
-                >
-                  {post.likes_count}
-                </span>
-              </button>
-            </div>
+            {/* いいね */}
+            <button
+              onClick={handleLike}
+              disabled={likeMutation.isPending}
+              className="flex items-center gap-1 hover:text-red-500 transition-colors"
+            >
+              {isLiked ? (
+                <HeartSolidIcon className="h-5 w-5 text-red-500" />
+              ) : (
+                <HeartIcon className="h-5 w-5 text-gray-500 hover:text-red-500" />
+              )}
+              <span className={isLiked ? "text-red-500" : "text-gray-500"}>
+                {likesCount}
+              </span>
+            </button>
           </div>
         </div>
       </Card>
