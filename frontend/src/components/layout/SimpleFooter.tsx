@@ -4,9 +4,7 @@ import Link from "next/link";
 import {
   HomeIcon,
   TagIcon,
-  UserGroupIcon,
   EnvelopeIcon,
-  CodeBracketIcon,
 } from "@heroicons/react/24/outline";
 
 export function Footer() {
@@ -17,16 +15,7 @@ export function Footer() {
       title: "メニュー",
       links: [
         { href: "/", label: "ホーム", icon: HomeIcon },
-        { href: "/posts/new", label: "新規投稿", icon: CodeBracketIcon },
         { href: "/tags", label: "タグ一覧", icon: TagIcon },
-      ],
-    },
-    {
-      title: "アカウント",
-      links: [
-        { href: "/profile", label: "プロフィール", icon: UserGroupIcon },
-        { href: "/login", label: "ログイン", icon: UserGroupIcon },
-        { href: "/signup", label: "新規登録", icon: UserGroupIcon },
       ],
     },
     {
@@ -45,7 +34,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* ブランド情報 */}
           <div className="col-span-1">
-            <h3 className="text-white text-lg font-bold mb-4">Blog App</h3>
+            <h3 className="text-white text-lg font-bold mb-4">Blog-Apo</h3>
             <p className="text-sm text-gray-400">
               Django REST FrameworkとNext.js
               15で構築されたモダンなブログアプリケーション
@@ -112,7 +101,7 @@ export function Footer() {
         <div className="mt-8 pt-8 border-t border-gray-800">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-sm text-gray-400">
-              © {currentYear} Blog App. All rights reserved.
+              © {currentYear} Blog Apo. All rights reserved.
             </p>
             <div className="mt-4 md:mt-0 flex space-x-6 text-sm">
               <Link
