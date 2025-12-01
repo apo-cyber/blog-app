@@ -27,8 +27,7 @@ class BlogPostAdmin(admin.ModelAdmin):
             'fields': ('title', 'author', 'description')
         }),
         ('画像', {
-            'fields': ('image', 'image2'),
-            'description': '画像は2枚まで設定できます'
+            'fields': ('image',)
         }),
         ('タグ', {
             'fields': ('tags',)

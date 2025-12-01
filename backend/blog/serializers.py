@@ -20,7 +20,7 @@ class BlogPostListSerializer(serializers.ModelSerializer):
     class Meta:
         model = BlogPost
         fields = [
-            'id', 'title', 'description', 'image', 'image2',
+            'id', 'title', 'description', 'image',
             'tags', 'likes_count',
             'created_at', 'updated_at', 'is_published'
         ]
@@ -38,7 +38,7 @@ class BlogPostDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = BlogPost
         fields = [
-            'id', 'title', 'description', 'image', 'image2',
+            'id', 'title', 'description', 'image',
             'tags', 'likes_count',
             'created_at', 'updated_at', 'is_published', 'published_at'
         ]

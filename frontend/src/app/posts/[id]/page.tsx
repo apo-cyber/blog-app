@@ -16,14 +16,10 @@ import { useBlogPost, useLikeBlogPost, useLikeStatus } from "@/hooks/useBlogPost
 import { Loading } from "@/components/ui/Loading";
 import { Header } from "@/components/layout/Header";
 import { Markdown } from "@/components/ui/Markdown";
-import { useState } from "react";
-import { ImageModal } from "@/components/ui/ImageModal";
 
 export default function BlogPostDetailPage() {
   const params = useParams();
   const postId = Number(params.id);
-
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const { data: post, isLoading, error } = useBlogPost(postId);
   const { data: likeStatus } = useLikeStatus(postId);
@@ -60,8 +56,6 @@ export default function BlogPostDetailPage() {
     );
   }
 
-  const hasImages = post.image || post.image2;
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -77,49 +71,18 @@ export default function BlogPostDetailPage() {
         </Link>
 
         <article className="bg-white rounded-lg shadow-md overflow-hidden">
-          {/* 画像エリア */}
-          {hasImages && (
-            <div className="p-4">
-              <p className="text-sm text-gray-500 mb-2 text-right">
-                画像をクリックすると拡大表示
-              </p>
-              <div
-                className={`grid gap-4 ${
-                  post.image && post.image2 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"
-                }`}
-              >
-                {post.image && (
-                  <div
-                    className="relative h-64 md:h-80 w-full cursor-pointer rounded-lg overflow-hidden bg-gray-100"
-                    onClick={() => setSelectedImage(post.image)}
-                  >
-                    <Image
-                      src={post.image}
-                      alt={`${post.title} - 画像1`}
-                      fill
-                      className="object-cover hover:scale-105 transition-transform duration-300"
-                      priority
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                      unoptimized
-                    />
-                  </div>
-                )}
-                {post.image2 && (
-                  <div
-                    className="relative h-64 md:h-80 w-full cursor-pointer rounded-lg overflow-hidden bg-gray-100"
-                    onClick={() => setSelectedImage(post.image2)}
-                  >
-                    <Image
-                      src={post.image2}
-                      alt={`${post.title} - 画像2`}
-                      fill
-                      className="object-cover hover:scale-105 transition-transform duration-300"
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                      unoptimized
-                    />
-                  </div>
-                )}
-              </div>
+          {/* 画像エリア - 全幅表示 */}
+          {post.image && (
+            <div className="w-full">
+              <Image
+                src={post.image}
+                alt={post.title}
+                width={1200}
+                height={800}
+                className="w-full h-auto"
+                priority
+                unoptimized
+              />
             </div>
           )}
 
@@ -193,18 +156,6 @@ export default function BlogPostDetailPage() {
             </div>
           </div>
         </article>
-
-        {/* 画像モーダル */}
-        {selectedImage && (
-          <ImageModal
-            src={selectedImage}
-            alt="拡大画像"
-            caption={post.title}
-            isOpen={!!selectedImage}
-            onClose={() => setSelectedImage(null)}
-          />
-        )}
-
       </main>
     </div>
   );

@@ -42,10 +42,7 @@ class BlogPost(models.Model):
 
     # 画像
     image = models.ImageField(
-        upload_to="blog_images/", blank=True, null=True, verbose_name="画像1"
-    )
-    image2 = models.ImageField(
-        upload_to="blog_images/", blank=True, null=True, verbose_name="画像2"
+        upload_to="blog_images/", blank=True, null=True, verbose_name="画像"
     )
 
     # タグ
@@ -114,11 +111,6 @@ class BlogPost(models.Model):
                 optimized = self._optimize_image(self.image)
                 if optimized:
                     self.image = optimized
-
-            if self.image2:
-                optimized2 = self._optimize_image(self.image2)
-                if optimized2:
-                    self.image2 = optimized2
 
         if self.is_published and not self.published_at:
             self.published_at = timezone.now()

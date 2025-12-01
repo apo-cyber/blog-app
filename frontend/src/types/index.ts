@@ -13,7 +13,6 @@ export interface BlogPost {
   title: string;
   description: string;
   image: string | null;
-  image2: string | null;
   tags: Tag[];
   likes_count: number;
   created_at: string;
