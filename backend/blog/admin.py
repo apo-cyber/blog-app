@@ -24,7 +24,7 @@ class BlogPostAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('基本情報', {
-            'fields': ('title', 'author', 'description')
+            'fields': ('title', 'description')
         }),
         ('画像', {
             'fields': ('image',)
@@ -40,3 +40,9 @@ class BlogPostAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+
+    def save_model(self, request, obj, form, change):
+        """保存時に著者を自動設定"""
+        if not change:  # 新規作成時のみ
+            obj.author = request.user
+        super().save_model(request, obj, form, change)
