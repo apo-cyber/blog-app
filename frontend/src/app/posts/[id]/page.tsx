@@ -102,7 +102,8 @@ export default function BlogPostDetailPage() {
         {/* 戻るボタン */}
         <Link
           href="/"
-          className="inline-flex items-center text-gray-600 hover:text-[#8b7eb8] mb-6 transition-colors"
+          prefetch={true}
+          className="inline-flex items-center text-[#8b7eb8] hover:text-[#6b5e98] mb-6 transition-colors glass px-4 py-2 rounded-full"
         >
           <ArrowLeftIcon className="h-5 w-5 mr-2" />
           記事一覧に戻る
