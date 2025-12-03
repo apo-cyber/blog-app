@@ -41,7 +41,7 @@ class BlogPostViewSet(viewsets.ReadOnlyModelViewSet):
             'tags'
         ).annotate(
             likes_count_cached=Count('likes')
-        ).select_related('author')
+        )
 
         # タグでフィルタリング
         tag = self.request.query_params.get("tag", None)
