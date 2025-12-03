@@ -20,6 +20,8 @@ export const useBlogPosts = (params?: {
   return useQuery({
     queryKey: ["blogPosts", params],
     queryFn: () => fetchBlogPosts(params),
+    staleTime: 1000 * 60 * 5, // 5分間はキャッシュを使用
+    gcTime: 1000 * 60 * 30, // 30分間キャッシュを保持
   });
 };
 

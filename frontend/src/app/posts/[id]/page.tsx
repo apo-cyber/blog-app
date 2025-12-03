@@ -67,11 +67,12 @@ export default function BlogPostDetailPage() {
 
       {/* ヒーローセクション */}
       <section className="relative h-[70vh] min-h-[500px] overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: "url('/hero2.jpg')",
-          }}
+        <Image
+          src="/hero2.jpg"
+          alt="Hero background"
+          fill
+          priority
+          className="object-cover object-center"
         />
         <div className="absolute inset-0 bg-black/30" />
         <div className="relative h-full flex flex-col items-center justify-center text-center px-4">

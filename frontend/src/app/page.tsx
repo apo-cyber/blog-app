@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/Button";
 import { MagnifyingGlassIcon, FunnelIcon } from "@heroicons/react/24/outline";
 import { Header } from "@/components/layout/Header";
 import { SimpleFooter } from "@/components/layout/SimpleFooter";
+import Image from "next/image";
 
 export default function HomePage() {
   const [search, setSearch] = useState("");
@@ -39,11 +40,12 @@ export default function HomePage() {
     <div className="min-h-screen gradient-bg-subtle">
       {/* ヒーローセクション（ヘッダー含む） */}
       <section className="relative h-[70vh] min-h-[500px] overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: "url('/hero.jpg')",
-          }}
+        <Image
+          src="/hero.jpg"
+          alt="Hero background"
+          fill
+          priority
+          className="object-cover object-center"
         />
         <div className="absolute inset-0 bg-black/30" />
 
