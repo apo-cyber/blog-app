@@ -17,13 +17,8 @@ const nextConfig = {
         pathname: "/media/**",
       },
       {
-        protocol: "http",
-        hostname: "blog.apo-cyber.com",
-        pathname: "/media/**",
-      },
-      {
         protocol: "https",
-        hostname: "blog.apo-cyber.com",
+        hostname: "apo-blog.com",
         pathname: "/media/**",
       },
     ],
