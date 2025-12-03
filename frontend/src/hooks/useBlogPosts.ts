@@ -22,6 +22,8 @@ export const useBlogPosts = (params?: {
     queryFn: () => fetchBlogPosts(params),
     staleTime: 1000 * 60 * 5, // 5分間はキャッシュを使用
     gcTime: 1000 * 60 * 30, // 30分間キャッシュを保持
+    retry: 2, // エラー時に2回リトライ
+    retryDelay: 1000, // 1秒後にリトライ
   });
 };
 

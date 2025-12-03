@@ -124,8 +124,11 @@ export default function HomePage() {
 
         {/* 記事一覧 */}
         {error ? (
-          <div className="text-center py-12">
-            <p className="text-red-600">エラーが発生しました</p>
+          <div className="text-center py-12 glass rounded-2xl">
+            <p className="text-gray-600 mb-4">データの読み込みに失敗しました</p>
+            <Button onClick={() => window.location.reload()} variant="secondary">
+              再読み込み
+            </Button>
           </div>
         ) : isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
