@@ -6,7 +6,6 @@ import { useState } from "react";
 import { useBlogPosts } from "@/hooks/useBlogPosts";
 import { useTags } from "@/hooks/useTags";
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
-import { Loading } from "@/components/ui/Loading";
 import { Button } from "@/components/ui/Button";
 import { MagnifyingGlassIcon, FunnelIcon } from "@heroicons/react/24/outline";
 import { Header } from "@/components/layout/Header";
@@ -122,11 +121,19 @@ export default function HomePage() {
         </div>
 
         {/* 記事一覧 */}
-        {isLoading ? (
-          <Loading />
-        ) : error ? (
+        {error ? (
           <div className="text-center py-12">
             <p className="text-red-600">エラーが発生しました</p>
+          </div>
+        ) : isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="glass rounded-2xl p-4 animate-pulse">
+                <div className="h-48 bg-gray-200 rounded-xl mb-4" />
+                <div className="h-6 bg-gray-200 rounded w-3/4 mb-2" />
+                <div className="h-4 bg-gray-200 rounded w-1/2" />
+              </div>
+            ))}
           </div>
         ) : postsData?.results.length === 0 ? (
           <div className="text-center py-12">
