@@ -120,7 +120,6 @@ export default function BlogPostDetailPage() {
                 height={600}
                 className="w-full h-auto"
                 priority
-                unoptimized
               />
             </div>
           )}
