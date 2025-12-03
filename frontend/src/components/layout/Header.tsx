@@ -20,20 +20,20 @@ export function Header() {
   ];
 
   return (
-    <header className="bg-white shadow-sm border-b">
+    <header className="absolute top-0 left-0 right-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* ロゴ */}
           <Link
             href="/"
-            className="flex items-center gap-2 text-lg font-bold text-gray-900 flex-shrink-0"
+            className="flex items-center gap-2 text-xl font-black text-white flex-shrink-0 hover:opacity-90 transition-opacity [text-shadow:_2px_2px_8px_rgb(0_0_0_/_90%),_0_0_20px_rgb(0_0_0_/_50%)]"
           >
-            <img src="/apo.png" alt="Apo logo" className="w-16 h-10" />
-            apo-blog
+            <img src="/apo.png" alt="Apo logo" className="w-16 h-10 rounded" />
+            <span className="font-poppins tracking-wide">apo-blog</span>
           </Link>
 
           {/* デスクトップナビゲーション */}
-          <nav className="hidden md:flex items-center space-x-4">
+          <nav className="hidden md:flex items-center space-x-2">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href;
@@ -42,10 +42,10 @@ export function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  className={`flex items-center px-4 py-2 rounded-full text-base font-bold transition-all duration-300 [text-shadow:_2px_2px_8px_rgb(0_0_0_/_90%),_0_0_20px_rgb(0_0_0_/_50%)] ${
                     isActive
-                      ? "bg-blue-100 text-blue-700"
-                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                      ? "bg-white/20 text-white backdrop-blur"
+                      : "text-white/80 hover:text-white hover:bg-white/10"
                   }`}
                 >
                   <Icon className="h-5 w-5 mr-1.5" />
@@ -58,21 +58,21 @@ export function Header() {
           {/* モバイルメニューボタン */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden flex items-center border border-gray-300 rounded-md px-2 py-1 text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="md:hidden flex items-center glass-dark rounded-full px-3 py-1.5 text-white hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all"
             aria-label="メニューを開く"
           >
             <span className="text-xs font-medium mr-1">MENU</span>
             {mobileMenuOpen ? (
-              <XMarkIcon className="h-6 w-6" />
+              <XMarkIcon className="h-5 w-5" />
             ) : (
-              <Bars3Icon className="h-6 w-6" />
+              <Bars3Icon className="h-5 w-5" />
             )}
           </button>
         </div>
 
         {/* モバイルメニュー */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 pb-3 pt-3">
+          <div className="md:hidden border-t border-white/20 pb-3 pt-3 fade-in">
             <div className="flex flex-col space-y-1">
               {navItems.map((item) => {
                 const Icon = item.icon;
@@ -83,10 +83,10 @@ export function Header() {
                     key={item.href}
                     href={item.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center px-3 py-3 text-base font-medium transition-colors ${
+                    className={`flex items-center px-4 py-3 rounded-xl text-base font-bold transition-all [text-shadow:_2px_2px_8px_rgb(0_0_0_/_90%),_0_0_20px_rgb(0_0_0_/_50%)] ${
                       isActive
-                        ? "bg-blue-100 text-blue-700"
-                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                        ? "bg-white/20 text-white"
+                        : "text-white/80 hover:text-white hover:bg-white/10"
                     }`}
                   >
                     <Icon className="h-5 w-5 mr-3 flex-shrink-0" />

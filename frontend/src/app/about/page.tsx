@@ -1,33 +1,46 @@
 // src/app/about/page.tsx
 
-"use client";
-
+import Image from "next/image";
 import { Header } from "@/components/layout/Header";
 import { Card } from "@/components/ui/Card";
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header />
+    <div className="min-h-screen gradient-bg-subtle">
+      {/* ヒーローセクション（ヘッダー含む） */}
+      <section className="relative h-[70vh] min-h-[500px] overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: "url('/hero3.jpg')",
+          }}
+        />
+        <div className="absolute inset-0 bg-black/30" />
+
+        {/* ヘッダー */}
+        <Header />
+
+        {/* ヒーローコンテンツ */}
+        <div className="relative h-full flex flex-col items-center justify-center text-center px-4">
+          <div className="w-32 h-32 mx-auto mb-6 relative">
+            <Image
+              src="/apo.jpg"
+              alt="apo-cyber プロフィール写真"
+              fill
+              priority
+              className="object-cover rounded-full shadow-xl border-4 border-white"
+            />
+          </div>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4">
+            apo-cyber
+          </h1>
+          <p className="text-xl text-white/90 max-w-2xl mx-auto font-bold">
+            技術と創造性を融合させて、より良い体験を作り出そう！！
+          </p>
+        </div>
+      </section>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* ヒーローセクション */}
-        <section className="text-center mb-12">
-          <div className="mb-8">
-            <div className="w-32 h-32 mx-auto mb-6 relative">
-              <img
-                src="/apo.jpg"
-                alt="apo-cyber プロフィール写真"
-                className="w-full h-full object-cover rounded-full shadow-xl border-4 border-white"
-              />
-            </div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">apo-cyber</h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              技術と創造性を融合させて、より良い体験を作り出そう！！
-            </p>
-          </div>
-        </section>
-
         {/* 自己紹介セクション */}
         <Card className="p-8 mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">自己紹介</h2>
@@ -53,11 +66,12 @@ export default function AboutPage() {
 
             {/* 画像部分 */}
             <div className="lg:col-span-1 flex justify-center lg:justify-end">
-              <div className="relative">
-                <img
+              <div className="relative w-48 h-48">
+                <Image
                   src="/apo.jpg"
                   alt="apo-cyber プロフィール写真"
-                  className="w-48 h-48 object-cover rounded-2xl shadow-lg"
+                  fill
+                  className="object-cover rounded-2xl shadow-lg"
                 />
                 <div className="absolute -bottom-4 -right-4 w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center text-white text-xl font-bold shadow-lg">
                   A

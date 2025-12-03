@@ -51,6 +51,7 @@ frontend/next-env.d.ts
 
 # === Editor & IDEs ===
 .vscode/
+.claude/
 .idea/
 *.sublime-project
 *.sublime-workspace

@@ -5,12 +5,15 @@ import { ReactNode } from "react";
 interface CardProps {
   children: ReactNode;
   className?: string;
+  hover?: boolean;
 }
 
-export function Card({ children, className = "" }: CardProps) {
+export function Card({ children, className = "", hover = true }: CardProps) {
   return (
     <div
-      className={`bg-white rounded-lg shadow-md overflow-hidden ${className}`}
+      className={`glass rounded-2xl shadow-lg overflow-hidden ${
+        hover ? "card-hover" : ""
+      } ${className}`}
     >
       {children}
     </div>

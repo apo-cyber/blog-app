@@ -1,14 +1,121 @@
 @import "tailwindcss";
 
+/* フォント設定 */
+:root {
+  --font-sans: var(--font-noto-sans-jp), var(--font-poppins), system-ui, sans-serif;
+}
+
+body {
+  font-family: var(--font-sans);
+}
+
+/* グラデーション背景 */
+.gradient-bg {
+  background: linear-gradient(90deg, #5b7db1 0%, #8b7eb8 50%, #a87cb0 100%);
+}
+
+.gradient-bg-subtle {
+  background: linear-gradient(180deg, #e8ecf3 0%, #f5f3f8 100%);
+}
+
+/* ガラスモーフィズム */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* カードホバーアニメーション */
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* マソンリーグリッド */
+.masonry-grid {
+  column-count: 1;
+  column-gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .masonry-grid {
+    column-count: 2;
+  }
+}
+
+@media (min-width: 1024px) {
+  .masonry-grid {
+    column-count: 3;
+  }
+}
+
+.masonry-item {
+  break-inside: avoid;
+  margin-bottom: 1.5rem;
+}
+
+/* スムーズなページ遷移 */
+.page-transition {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* フェードインアニメーション */
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* タグホバー */
+.tag-hover {
+  transition: all 0.2s ease;
+}
+
+.tag-hover:hover {
+  transform: scale(1.05);
+  background: linear-gradient(90deg, #5b7db1 0%, #8b7eb8 100%);
+  color: white;
+}
+
 /* カスタムスタイル */
 .form-input {
-  @apply w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+  @apply w-full px-3 py-2 bg-white/80 backdrop-blur border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#8b7eb8] focus:border-[#8b7eb8] transition-all;
 }
 
 .search-input {
-  @apply w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+  @apply w-full pl-10 pr-4 py-2 bg-white/80 backdrop-blur border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#8b7eb8] focus:border-[#8b7eb8] transition-all;
 }
 
 .form-select {
-  @apply border border-gray-300 rounded-md px-3 py-1.5 text-sm bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+  @apply border border-gray-200 rounded-xl px-3 py-1.5 text-sm bg-white/80 backdrop-blur text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#8b7eb8] focus:border-[#8b7eb8] transition-all;
 }

@@ -12,9 +12,14 @@ import {
   ArrowLeftIcon,
 } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartSolidIcon } from "@heroicons/react/24/solid";
-import { useBlogPost, useLikeBlogPost, useLikeStatus } from "@/hooks/useBlogPosts";
+import {
+  useBlogPost,
+  useLikeBlogPost,
+  useLikeStatus,
+} from "@/hooks/useBlogPosts";
 import { Loading } from "@/components/ui/Loading";
 import { Header } from "@/components/layout/Header";
+import { SimpleFooter } from "@/components/layout/SimpleFooter";
 import { Markdown } from "@/components/ui/Markdown";
 
 export default function BlogPostDetailPage() {
@@ -57,28 +62,60 @@ export default function BlogPostDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen gradient-bg-subtle">
       <Header />
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* ヒーローセクション */}
+      <section className="relative h-[70vh] min-h-[500px] overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: "url('/hero2.jpg')",
+          }}
+        />
+        <div className="absolute inset-0 bg-black/30" />
+        <div className="relative h-full flex flex-col items-center justify-center text-center px-4">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl text-white mb-6 max-w-4xl tracking-tight font-bold">
+            {post.title}
+          </h1>
+          <div className="flex flex-wrap items-center justify-center gap-4 text-white text-sm font-bold">
+            <div className="flex items-center gap-1">
+              <ClockIcon className="h-4 w-4" />
+              <time dateTime={post.created_at}>
+                {format(new Date(post.created_at), "yyyy年MM月dd日 HH:mm", {
+                  locale: ja,
+                })}
+              </time>
+            </div>
+            {post.tags.length > 0 && (
+              <div className="flex items-center gap-2">
+                <TagIcon className="h-4 w-4" />
+                {post.tags.map((tag) => tag.name).join(", ")}
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <main className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8 page-transition">
         {/* 戻るボタン */}
         <Link
           href="/"
-          className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4"
+          className="inline-flex items-center text-gray-600 hover:text-[#8b7eb8] mb-6 transition-colors"
         >
           <ArrowLeftIcon className="h-5 w-5 mr-2" />
           記事一覧に戻る
         </Link>
 
-        <article className="bg-white rounded-lg shadow-md overflow-hidden">
-          {/* 画像エリア - 全幅表示 */}
+        <article className="glass rounded-2xl shadow-lg overflow-hidden">
+          {/* 記事画像 */}
           {post.image && (
             <div className="w-full">
               <Image
                 src={post.image}
                 alt={post.title}
-                width={1200}
-                height={800}
+                width={800}
+                height={600}
                 className="w-full h-auto"
                 priority
                 unoptimized
@@ -87,44 +124,15 @@ export default function BlogPostDetailPage() {
           )}
 
           <div className="p-8">
-            {/* タイトル */}
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">
-              {post.title}
-            </h1>
-
-            {/* メタ情報 */}
-            <div className="flex flex-wrap items-center gap-4 text-gray-600 mb-6">
-              {/* 投稿日時 */}
-              <div className="flex items-center gap-1">
-                <ClockIcon className="h-4 w-4" />
-                <time dateTime={post.created_at}>
-                  {format(new Date(post.created_at), "yyyy年MM月dd日 HH:mm", {
-                    locale: ja,
-                  })}
-                </time>
-              </div>
-
-              {/* 更新日時（投稿日時と異なる場合のみ表示） */}
-              {post.created_at !== post.updated_at && (
-                <span className="text-sm">
-                  (更新:{" "}
-                  {format(new Date(post.updated_at), "yyyy年MM月dd日", {
-                    locale: ja,
-                  })}
-                  )
-                </span>
-              )}
-            </div>
-
             {/* タグ */}
             {post.tags.length > 0 && (
               <div className="flex items-center gap-2 mb-6 flex-wrap">
-                <TagIcon className="h-5 w-5 text-gray-400" />
+                <TagIcon className="h-5 w-5 text-[#8b7eb8]" />
                 {post.tags.map((tag) => (
                   <Link
                     key={tag.id}
                     href={`/?tag=${tag.name}`}
-                    className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm hover:bg-blue-200 transition-colors"
+                    className="bg-[#f0f0f8] text-[#6b6b8d] px-3 py-1 rounded-full text-sm hover:bg-[#e8e8f0] transition-colors tag-hover"
                   >
                     {tag.name}
                   </Link>
@@ -138,18 +146,24 @@ export default function BlogPostDetailPage() {
             </div>
 
             {/* いいねボタン */}
-            <div className="flex items-center pt-6 border-t">
+            <div className="flex items-center pt-6 border-t border-gray-200">
               <button
                 onClick={handleLike}
                 disabled={likeMutation.isPending}
-                className="flex items-center gap-2 text-gray-700 hover:text-red-500 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-red-50 transition-all group"
               >
                 {likeStatus?.is_liked ? (
-                  <HeartSolidIcon className="h-6 w-6 text-red-500" />
+                  <HeartSolidIcon className="h-6 w-6 text-red-500 animate-pulse" />
                 ) : (
-                  <HeartIcon className="h-6 w-6" />
+                  <HeartIcon className="h-6 w-6 text-gray-400 group-hover:text-red-500 transition-colors" />
                 )}
-                <span className="font-medium">
+                <span
+                  className={`font-medium ${
+                    likeStatus?.is_liked
+                      ? "text-red-500"
+                      : "text-gray-500 group-hover:text-red-500"
+                  } transition-colors`}
+                >
                   {likeStatus?.likes_count ?? post.likes_count}
                 </span>
               </button>
@@ -157,6 +171,7 @@ export default function BlogPostDetailPage() {
           </div>
         </article>
       </main>
+      <SimpleFooter />
     </div>
   );
 }

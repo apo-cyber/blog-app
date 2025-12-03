@@ -37,12 +37,39 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header />
+    <div className="min-h-screen gradient-bg-subtle">
+      {/* ヒーローセクション（ヘッダー含む） */}
+      <section className="relative h-[70vh] min-h-[500px] overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: "url('/hero.jpg')",
+          }}
+        />
+        <div className="absolute inset-0 bg-black/30" />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* ヘッダー */}
+        <Header />
+
+        {/* ヒーローコンテンツ */}
+        <div className="relative h-full flex items-center px-4">
+          <div className="w-1/2 flex flex-col items-center justify-center text-center">
+            <h1 className="text-6xl md:text-8xl font-black text-white mb-6 tracking-tight">
+              Apo Blog
+            </h1>
+            <p className="text-2xl md:text-4xl font-bold text-white mb-3">
+              日々の記録と発見
+            </p>
+            <p className="text-base md:text-lg font-medium text-white">
+              Django & Next.js で作る個人ブログ
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 page-transition">
         {/* 検索・フィルター */}
-        <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+        <div className="glass rounded-2xl shadow-lg p-6 mb-8">
           <form onSubmit={handleSearch} className="flex gap-4 mb-4">
             <div className="flex-1 relative">
               <input
@@ -50,9 +77,9 @@ export default function HomePage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="記事を検索..."
-                className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="search-input"
               />
-              <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+              <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-5 w-5 text-[#8b7eb8]" />
             </div>
             <Button type="submit">検索</Button>
           </form>
@@ -60,14 +87,14 @@ export default function HomePage() {
           <div className="flex flex-wrap gap-4 items-center">
             {/* タグフィルター */}
             <div className="flex items-center gap-2">
-              <FunnelIcon className="h-5 w-5 text-gray-400" />
+              <FunnelIcon className="h-5 w-5 text-[#8b7eb8]" />
               <select
                 value={selectedTag}
                 onChange={(e) => {
                   setSelectedTag(e.target.value);
                   setPage(1);
                 }}
-                className="bg-white border border-gray-300 rounded-md px-3 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="form-select"
               >
                 <option value="">すべてのタグ</option>
                 {tags?.map((tag) => (
@@ -85,7 +112,7 @@ export default function HomePage() {
                 setOrdering(e.target.value);
                 setPage(1);
               }}
-              className="bg-white border border-gray-300 rounded-md px-3 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="form-select"
             >
               <option value="-created_at">新しい順</option>
               <option value="created_at">古い順</option>
@@ -123,7 +150,7 @@ export default function HomePage() {
                 >
                   前のページ
                 </Button>
-                <span className="flex items-center px-4 py-2 text-gray-700">
+                <span className="flex items-center px-4 py-2 text-gray-700 glass rounded-full">
                   ページ {page}
                 </span>
                 <Button
