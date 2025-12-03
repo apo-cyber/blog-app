@@ -26,8 +26,8 @@ class BlogPostListSerializer(serializers.ModelSerializer):
         ]
 
     def get_likes_count(self, obj):
-        """いいねの数を取得"""
-        return obj.likes.count()
+        """いいねの数を取得（annotateでキャッシュされた値を使用）"""
+        return getattr(obj, 'likes_count_cached', obj.likes.count())
 
 
 class BlogPostDetailSerializer(serializers.ModelSerializer):
@@ -44,5 +44,5 @@ class BlogPostDetailSerializer(serializers.ModelSerializer):
         ]
 
     def get_likes_count(self, obj):
-        """いいねの数を取得"""
-        return obj.likes.count()
+        """いいねの数を取得（annotateでキャッシュされた値を使用）"""
+        return getattr(obj, 'likes_count_cached', obj.likes.count())

@@ -35,7 +35,13 @@ class BlogPostViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         """クエリセットを取得（フィルタリング機能付き）"""
-        queryset = BlogPost.objects.filter(is_published=True)
+        from django.db.models import Count
+
+        queryset = BlogPost.objects.filter(is_published=True).prefetch_related(
+            'tags'
+        ).annotate(
+            likes_count_cached=Count('likes')
+        ).select_related('author')
 
         # タグでフィルタリング
         tag = self.request.query_params.get("tag", None)
