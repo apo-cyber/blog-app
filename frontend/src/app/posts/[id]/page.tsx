@@ -148,26 +148,32 @@ export default function BlogPostDetailPage() {
 
             {/* いいねボタン */}
             <div className="flex items-center pt-6 border-t border-gray-200">
-              <button
-                onClick={handleLike}
-                disabled={likeMutation.isPending}
-                className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-red-50 transition-all group"
-              >
-                {likeStatus?.is_liked ? (
-                  <HeartSolidIcon className="h-6 w-6 text-red-500 animate-pulse" />
-                ) : (
-                  <HeartIcon className="h-6 w-6 text-gray-400 group-hover:text-red-500 transition-colors" />
-                )}
-                <span
-                  className={`font-medium ${
-                    likeStatus?.is_liked
-                      ? "text-red-500"
-                      : "text-gray-500 group-hover:text-red-500"
-                  } transition-colors`}
-                >
-                  {likeStatus?.likes_count ?? post.likes_count}
-                </span>
-              </button>
+              {(() => {
+                const likesCount = likeStatus?.likes_count ?? post.likes_count;
+                const hasLikes = likesCount > 0;
+                return (
+                  <button
+                    onClick={handleLike}
+                    disabled={likeMutation.isPending}
+                    className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-red-50 transition-all group"
+                  >
+                    {hasLikes ? (
+                      <HeartSolidIcon className="h-6 w-6 text-red-500" />
+                    ) : (
+                      <HeartIcon className="h-6 w-6 text-gray-400 group-hover:text-red-500 transition-colors" />
+                    )}
+                    <span
+                      className={`font-medium ${
+                        hasLikes
+                          ? "text-red-500"
+                          : "text-gray-500 group-hover:text-red-500"
+                      } transition-colors`}
+                    >
+                      {likesCount}
+                    </span>
+                  </button>
+                );
+              })()}
             </div>
           </div>
         </article>

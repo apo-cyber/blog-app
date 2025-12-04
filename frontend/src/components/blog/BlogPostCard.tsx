@@ -27,8 +27,8 @@ export function BlogPostCard({ post }: BlogPostCardProps) {
     }
   };
 
-  const isLiked = likeStatus?.is_liked ?? false;
   const likesCount = likeStatus?.likes_count ?? post.likes_count;
+  const hasLikes = likesCount > 0; // 1以上なら赤くする
 
   return (
     <Link href={`/posts/${post.id}`} className="block">
@@ -100,14 +100,14 @@ export function BlogPostCard({ post }: BlogPostCardProps) {
               disabled={likeMutation.isPending}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-red-50 transition-all duration-300 group"
             >
-              {isLiked ? (
-                <HeartSolidIcon className="h-5 w-5 text-red-500 animate-pulse" />
+              {hasLikes ? (
+                <HeartSolidIcon className="h-5 w-5 text-red-500" />
               ) : (
                 <HeartIcon className="h-5 w-5 text-gray-400 group-hover:text-red-500 transition-colors" />
               )}
               <span
                 className={`font-medium ${
-                  isLiked ? "text-red-500" : "text-gray-500 group-hover:text-red-500"
+                  hasLikes ? "text-red-500" : "text-gray-500 group-hover:text-red-500"
                 } transition-colors`}
               >
                 {likesCount}
