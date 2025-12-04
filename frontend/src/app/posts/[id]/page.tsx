@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { format } from "date-fns";
@@ -24,6 +24,7 @@ import { Markdown } from "@/components/ui/Markdown";
 
 export default function BlogPostDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const postId = Number(params.id);
 
   const { data: post, isLoading, error } = useBlogPost(postId);
@@ -34,6 +35,10 @@ export default function BlogPostDetailPage() {
     if (likeStatus) {
       likeMutation.mutate({ id: postId, isLiked: likeStatus.is_liked });
     }
+  };
+
+  const handleBack = () => {
+    router.back();
   };
 
   if (isLoading) {
@@ -100,14 +105,13 @@ export default function BlogPostDetailPage() {
 
       <main className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8 page-transition">
         {/* 戻るボタン */}
-        <Link
-          href="/"
-          prefetch={true}
+        <button
+          onClick={handleBack}
           className="inline-flex items-center text-[#8b7eb8] hover:text-[#6b5e98] mb-6 transition-colors glass px-4 py-2 rounded-full"
         >
           <ArrowLeftIcon className="h-5 w-5 mr-2" />
           記事一覧に戻る
-        </Link>
+        </button>
 
         <article className="glass rounded-2xl shadow-lg overflow-hidden">
           {/* 記事画像 */}
