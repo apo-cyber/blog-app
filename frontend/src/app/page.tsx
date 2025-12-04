@@ -2,7 +2,8 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useBlogPosts } from "@/hooks/useBlogPosts";
 import { useTags } from "@/hooks/useTags";
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
@@ -12,11 +13,27 @@ import { Header } from "@/components/layout/Header";
 import { SimpleFooter } from "@/components/layout/SimpleFooter";
 import Image from "next/image";
 
-export default function HomePage() {
+function HomeContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // URLからページ番号を取得（デフォルトは1）
+  const page = Number(searchParams.get("page")) || 1;
+
   const [search, setSearch] = useState("");
   const [selectedTag, setSelectedTag] = useState<string>("");
   const [ordering, setOrdering] = useState("-created_at");
-  const [page, setPage] = useState(1);
+
+  // ページ変更時にURLを更新
+  const setPage = (newPage: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (newPage === 1) {
+      params.delete("page");
+    } else {
+      params.set("page", String(newPage));
+    }
+    router.push(`/?${params.toString()}`, { scroll: false });
+  };
 
   const {
     data: postsData,
@@ -179,5 +196,13 @@ export default function HomePage() {
       </main>
       <SimpleFooter />
     </div>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen gradient-bg-subtle" />}>
+      <HomeContent />
+    </Suspense>
   );
 }
