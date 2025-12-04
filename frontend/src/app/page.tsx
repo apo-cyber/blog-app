@@ -17,22 +17,37 @@ function HomeContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // URLからページ番号を取得（デフォルトは1）
+  // URLからパラメータを取得
   const page = Number(searchParams.get("page")) || 1;
+  const selectedTag = searchParams.get("tag") || "";
+  const ordering = searchParams.get("ordering") || "-created_at";
 
   const [search, setSearch] = useState("");
-  const [selectedTag, setSelectedTag] = useState<string>("");
-  const [ordering, setOrdering] = useState("-created_at");
 
-  // ページ変更時にURLを更新
-  const setPage = (newPage: number) => {
+  // URLパラメータを更新する共通関数
+  const updateParams = (updates: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams.toString());
-    if (newPage === 1) {
-      params.delete("page");
-    } else {
-      params.set("page", String(newPage));
-    }
-    router.push(`/?${params.toString()}`, { scroll: false });
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value === null || value === "" || (key === "page" && value === "1") || (key === "ordering" && value === "-created_at")) {
+        params.delete(key);
+      } else {
+        params.set(key, value);
+      }
+    });
+    const queryString = params.toString();
+    router.push(queryString ? `/?${queryString}` : "/", { scroll: false });
+  };
+
+  const setPage = (newPage: number) => {
+    updateParams({ page: String(newPage) });
+  };
+
+  const setSelectedTag = (tag: string) => {
+    updateParams({ tag, page: "1" });
+  };
+
+  const setOrdering = (newOrdering: string) => {
+    updateParams({ ordering: newOrdering, page: "1" });
   };
 
   const {
@@ -108,10 +123,7 @@ function HomeContent() {
               <FunnelIcon className="h-5 w-5 text-[#8b7eb8]" />
               <select
                 value={selectedTag}
-                onChange={(e) => {
-                  setSelectedTag(e.target.value);
-                  setPage(1);
-                }}
+                onChange={(e) => setSelectedTag(e.target.value)}
                 className="form-select"
               >
                 <option value="">すべてのタグ</option>
@@ -126,10 +138,7 @@ function HomeContent() {
             {/* ソート */}
             <select
               value={ordering}
-              onChange={(e) => {
-                setOrdering(e.target.value);
-                setPage(1);
-              }}
+              onChange={(e) => setOrdering(e.target.value)}
               className="form-select"
             >
               <option value="-created_at">新しい順</option>
