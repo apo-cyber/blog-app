@@ -90,7 +90,7 @@ function HomeContent() {
             <h1 className="text-6xl md:text-8xl font-black text-white mb-6 tracking-tight">
               Apo Blog
             </h1>
-            <p className="text-2xl md:text-4xl font-bold text-white mb-3">
+            <p className="text-xl md:text-4xl font-bold text-white mb-3 whitespace-nowrap">
               日々の記録と発見
             </p>
             <p className="text-base md:text-lg font-medium text-white">
