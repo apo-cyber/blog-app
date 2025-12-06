@@ -180,21 +180,23 @@ function HomeContent() {
 
             {/* ページネーション */}
             {postsData && (postsData.next || postsData.previous) && (
-              <div className="flex justify-center gap-4 mt-8">
+              <div className="flex justify-center gap-2 sm:gap-4 mt-8 flex-wrap">
                 <Button
                   variant="secondary"
                   disabled={!postsData.previous}
                   onClick={() => setPage(page - 1)}
+                  className="whitespace-nowrap"
                 >
                   前のページ
                 </Button>
-                <span className="flex items-center px-4 py-2 text-gray-700 glass rounded-full">
+                <span className="flex items-center px-4 py-2 text-gray-700 glass rounded-full whitespace-nowrap">
                   ページ {page}
                 </span>
                 <Button
                   variant="secondary"
                   disabled={!postsData.next}
                   onClick={() => setPage(page + 1)}
+                  className="whitespace-nowrap"
                 >
                   次のページ
                 </Button>
