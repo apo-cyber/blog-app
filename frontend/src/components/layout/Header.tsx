@@ -72,7 +72,7 @@ export function Header() {
 
         {/* モバイルメニュー */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-white/20 pb-3 pt-3 fade-in">
+          <div className="md:hidden bg-black/70 backdrop-blur-md rounded-xl mt-2 p-3 fade-in">
             <div className="flex flex-col space-y-1">
               {navItems.map((item) => {
                 const Icon = item.icon;
